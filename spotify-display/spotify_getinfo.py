@@ -15,13 +15,13 @@ artworkUrl= os.popen("dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spot
 
 fle=os.popen("/usr/bin/gsettings get org.gnome.desktop.background picture-uri").read()
 fle=fle.replace("\n", " ")
-fstored_album = open(os.getenv('HOME') + '/spotify-display/stored_album.txt', 'r')
+fstored_album = open(os.getenv('HOME') + '/.conky/spotify-display/stored_album.txt', 'r')
 stored_album = fstored_album.readlines()
 fstored_album.close()
 
 if (playing_album+fle).strip('\n') != stored_album[0].strip('\n'):
 	# New cover needs to be downloaded
-	os.system("wget -O $HOME/spotify-display/latest.jpg https://i.scdn.co/image/" + artworkUrl[31:])
+	os.system("wget -O $HOME/.conky/spotify-display/latest.jpg https://i.scdn.co/image/" + artworkUrl[31:])
 	# If you'd like download a cover 174x174 instead of 64x64 use this one instead:no
 	# os.system("wget -O $HOME/.conky/spotify-display/latest.jpg \"http://interactiveplaylist.com/ipfal?album=" + playing_album + "&artist=" + playing_artist + "\"")
 	#quailty code
@@ -29,14 +29,15 @@ if (playing_album+fle).strip('\n') != stored_album[0].strip('\n'):
 	wall_height=int(size[0])
 	wall_width=(wall_height/1920)*400
 	avgColor=os.popen("convert "+fle+" -crop " + str(wall_width) + "x"+ str((int(size[1])/1080)*300) +"+"+str(wall_height-wall_width)+"+""15 -scale 1x1\\! txt:-").read()[1:].split("(")[2][:-2].split(",")
-	if (float(avgColor[0])*0.299 + float(avgColor[1])*0.587 + float(avgColor[2])*0.114) > 186:
+	#if (float(avgColor[0])*0.299 + float(avgColor[1])*0.587 + float(avgColor[2])*0.114) > 186:
+	if (float(avgColor[0][:-1])*0.299 + float(avgColor[1][:-1])*0.587 +float(avgColor[2][:-1])*0.114) > 186:
 		colora=str(3)
 		coloraa=str(2)
 	else:
 		colora=str(0)
 		coloraa=str(1)
 	# Update current_song.txt using bash 380*150
-	os.system("echo \"" + ((playing_album + fle).strip('\n')+"\n"+colora+"\n"+coloraa) + "\" > $HOME/spotify-display/stored_album.txt")
+	os.system("echo \"" + ((playing_album + fle).strip('\n')+"\n"+colora+"\n"+coloraa) + "\" > $HOME/.conky/spotify-display/stored_album.txt")
 	#1475
 else:
 	colora=str(stored_album[1]).strip("\n")
